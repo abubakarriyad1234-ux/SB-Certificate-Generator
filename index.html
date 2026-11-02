@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Certificate Generator — SB Vocational Training Centre</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..700&family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #eef0f3;
+        --surface: #ffffff;
+        --surface-2: #f6f7f9;
+        --ink: #182236;
+        --ink-soft: #4a5568;
+        --line: #d9dde4;
+        --navy: #1d3a5f;
+        --navy-hover: #162e4d;
+        --accent: #b3372c;
+        --error: #b3261e;
+        --error-bg: #fdf0ef;
+        --ok: #1e7d46;
+        --ok-bg: #ecf7f0;
+        --shadow: 0 10px 30px rgba(24, 34, 54, 0.14);
+        --radius: 14px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e131c;
+          --surface: #171f2d;
+          --surface-2: #1d2739;
+          --ink: #e9edf4;
+          --ink-soft: #a7b1c2;
+          --line: #2c3850;
+          --navy: #3d6db0;
+          --navy-hover: #4a7cc0;
+          --accent: #e0685c;
+          --error: #ff9d94;
+          --error-bg: #3a2321;
+          --ok: #7fd6a4;
+          --ok-bg: #1d3128;
+          --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif;
+        line-height: 1.55;
+      }
+      .page {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 28px 20px 48px;
+      }
+      .intro { margin-bottom: 22px; }
+      .intro h1 {
+        margin: 0 0 4px;
+        font-size: clamp(1.55rem, 3.4vw, 2.1rem);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+      .intro h1 .en {
+        font-size: 0.52em;
+        font-weight: 600;
+        color: var(--ink-soft);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-left: 10px;
+        white-space: nowrap;
+      }
+      .intro p {
+        margin: 0;
+        color: var(--ink-soft);
+        max-width: 62ch;
+        font-size: 1rem;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 400px minmax(0, 1fr);
+        gap: 26px;
+        align-items: start;
+      }
+      @media (max-width: 920px) {
+        .layout { grid-template-columns: minmax(0, 1fr); }
+      }
+
+      /* ---------- form ---------- */
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 22px 22px 24px;
+      }
+      .panel h2 {
+        margin: 0 0 4px;
+        font-size: 1.12rem;
+        font-weight: 600;
+      }
+      .panel h2 .en {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-left: 8px;
+      }
+      .panel .sub {
+        margin: 0 0 18px;
+        color: var(--ink-soft);
+        font-size: 0.92rem;
+      }
+      .field { margin-bottom: 15px; }
+      .field label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.98rem;
+        margin-bottom: 5px;
+      }
+      .field label .en {
+        font-weight: 400;
+        font-size: 0.8rem;
+        color: var(--ink-soft);
+        margin-left: 6px;
+      }
+      .field label .req { color: var(--accent); font-weight: 700; }
+      .field input {
+        width: 100%;
+        padding: 10px 12px;
+        font: inherit;
+        font-size: 1rem;
+        color: var(--ink);
+        background: var(--surface-2);
+        border: 1.5px solid var(--line);
+        border-radius: 9px;
+        outline: none;
+        transition: border-color 0.15s ease;
+      }
+      .field input:focus {
+        border-color: var(--navy);
+        background: var(--surface);
+      }
+      .field input.invalid {
+        border-color: var(--error);
+        background: var(--error-bg);
+      }
+      .field .hint {
+        margin: 4px 0 0;
+        font-size: 0.84rem;
+        color: var(--ink-soft);
+      }
+      .field .ferr {
+        display: none;
+        margin: 4px 0 0;
+        font-size: 0.86rem;
+        color: var(--error);
+        font-weight: 500;
+      }
+      .field.has-error .ferr { display: block; }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 460px) {
+        .grid-2 { grid-template-columns: 1fr; }
+      }
+      .actions { margin-top: 20px; }
+      .btn-download {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 14px 18px;
+        font: inherit;
+        font-size: 1.08rem;
+        font-weight: 700;
+        color: #fff;
+        background: var(--navy);
+        border: none;
+        border-radius: 11px;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.05s ease;
+      }
+      .btn-download:hover { background: var(--navy-hover); }
+      .btn-download:active { transform: translateY(1px); }
+      .btn-download:disabled { opacity: 0.65; cursor: wait; }
+      .btn-download svg { flex: none; }
+      .btn-reset {
+        display: block;
+        margin: 12px auto 0;
+        padding: 6px 10px;
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: var(--ink-soft);
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .btn-reset:hover { color: var(--ink); }
+      .privacy {
+        margin: 14px 0 0;
+        font-size: 0.86rem;
+        color: var(--ink-soft);
+        text-align: center;
+      }
+      .status {
+        display: none;
+        margin-top: 14px;
+        padding: 11px 13px;
+        border-radius: 9px;
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+      .status.show { display: block; }
+      .status.err { background: var(--error-bg); color: var(--error); }
+      .status.ok { background: var(--ok-bg); color: var(--ok); }
+
+      /* ---------- preview ---------- */
+      .preview-col {
+        position: sticky;
+        top: 20px;
+      }
+      @media (max-width: 920px) {
+        .preview-col { position: static; }
+      }
+      .preview-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .preview-head h2 {
+        margin: 0;
+        font-size: 1.12rem;
+        font-weight: 600;
+      }
+      .preview-head h2 .en {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-left: 8px;
+      }
+      .preview-head .spec {
+        font-size: 0.88rem;
+        color: var(--ink-soft);
+      }
+      .cert-shadow {
+        box-shadow: var(--shadow);
+        border-radius: 4px;
+      }
+
+      /* ---------- certificate (matches the centre's demo design) ---------- */
+      .cert {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 297 / 210;
+        background: #ffffff;
+        color: #141414;
+        font-family: "EB Garamond", "Times New Roman", serif;
+        overflow: hidden;
+      }
+      .cert-frame {
+        position: absolute;
+        inset: 0.55em;
+        border: 0.17em solid #1d1d1f;
+      }
+      .cert-inner {
+        position: absolute;
+        inset: 0.34em;
+        border: 0.07em solid #1d1d1f;
+        padding: 1.35em 2.7em 1.05em;
+        display: flex;
+        flex-direction: column;
+      }
+      .cert-head {
+        display: grid;
+        grid-template-columns: 9.5em 1fr 9.5em;
+        align-items: start;
+      }
+      .cert-logo img {
+        width: 5.9em;
+        height: 5.9em;
+        object-fit: contain;
+        display: block;
+      }
+      .cert-title { text-align: center; padding-top: 0.55em; }
+      .cert-centre {
+        font-weight: 700;
+        font-size: 1.52em;
+        letter-spacing: 0.015em;
+        text-transform: uppercase;
+        line-height: 1.15;
+      }
+      .cert-level {
+        font-weight: 700;
+        font-size: 0.8em;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-top: 0.4em;
+      }
+      .cert-license {
+        text-align: right;
+        padding-top: 0.55em;
+        font-size: 0.74em;
+        line-height: 1.45;
+        text-transform: uppercase;
+      }
+      .cert-license strong {
+        display: block;
+        font-weight: 700;
+        font-size: 1.04em;
+        text-transform: none;
+        word-break: break-all;
+      }
+      .cert-jp-title {
+        text-align: center;
+        font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+        font-weight: 700;
+        font-size: 2.05em;
+        letter-spacing: 0.38em;
+        text-indent: 0.38em;
+        margin-top: 1.05em;
+        line-height: 1.3;
+      }
+      .cert-en-sub {
+        text-align: center;
+        font-style: italic;
+        font-size: 0.98em;
+        margin-top: 0.55em;
+      }
+      .cert-name {
+        text-align: center;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+        margin-top: 0.3em;
+        word-break: break-word;
+      }
+      .cert-name.lg { font-size: 1.92em; }
+      .cert-name.md { font-size: 1.58em; }
+      .cert-name.sm { font-size: 1.3em; }
+      .cert-jp-body {
+        text-align: center;
+        font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+        font-weight: 500;
+        font-size: 1.22em;
+        line-height: 2.0;
+        margin-top: 1.15em;
+        padding: 0 0.6em;
+      }
+      .cert-en-body {
+        text-align: center;
+        font-size: 0.8em;
+        line-height: 1.55;
+        margin-top: 1.25em;
+        padding: 0 3.2em;
+      }
+      .cert-bottom { margin-top: auto; }
+      .cert-issue {
+        text-align: center;
+        font-size: 0.95em;
+        letter-spacing: 0.03em;
+        margin-bottom: 0.6em;
+      }
+      .cert-issue strong { font-weight: 700; }
+      .cert-divider {
+        border-top: 0.07em solid #8f8f8f;
+        margin: 0 1.1em 1.2em;
+      }
+      .cert-sigs {
+        display: flex;
+        justify-content: space-between;
+        gap: 2em;
+        padding: 0 1.1em;
+      }
+      .cert-sig { text-align: center; }
+      .cert-sig .line {
+        width: 11.5em;
+        max-width: 34vw;
+        border-top: 0.09em dotted #3a3a3a;
+        margin: 0 auto 0.5em;
+      }
+      .cert-sig .role {
+        font-weight: 700;
+        font-size: 0.74em;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        line-height: 1.5;
+      }
+      .cert-sig .org {
+        font-weight: 700;
+        font-size: 0.74em;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        line-height: 1.5;
+      }
+      .cert-foot {
+        text-align: center;
+        font-size: 0.68em;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-top: 1.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="intro">
+        <h1>সার্টিফিকেট জেনারেটর <span class="en">Certificate Generator</span></h1>
+        <p>
+          SB Vocational Training Centre-এর কোর্স সমাপনী সার্টিফিকেট (修了証明書) তৈরির টুল।
+          নিচের ফর্মে শিক্ষার্থীর তথ্য লিখুন — পাশে লাইভ প্রিভিউ দেখা যাবে — তারপর এক ক্লিকে
+          PDF ডাউনলোড করুন।
+        </p>
+      </header>
+
+      <div class="layout">
+        <!-- ================= form ================= -->
+        <section class="panel" aria-label="সার্টিফিকেটের তথ্যের ফর্ম">
+          <h2>সার্টিফিকেটের তথ্য <span class="en">Certificate Details</span></h2>
+          <p class="sub">সব ঘরই বদলানো যাবে। <span aria-hidden="true" style="color:var(--accent)">*</span> চিহ্নিত ঘরগুলো আবশ্যক।</p>
+
+          <form id="cert-form" novalidate>
+            <div class="field" data-field="name">
+              <label for="f-name">শিক্ষার্থীর পুরো নাম <span class="en">Student Full Name</span> <span class="req">*</span></label>
+              <input id="f-name" type="text" value="ABU BAKAR RIYAD" autocomplete="off" placeholder="যেমন: ABU BAKAR RIYAD" />
+              <p class="ferr">শিক্ষার্থীর নাম লিখুন। / Please enter the student's name.</p>
+            </div>
+
+            <div class="field" data-field="license">
+              <label for="f-license">লাইসেন্স নম্বর <span class="en">License No.</span> <span class="req">*</span></label>
+              <input id="f-license" type="text" value="SBVTC/N5/2026/00427" autocomplete="off" placeholder="যেমন: SBVTC/N5/2026/00427" />
+              <p class="ferr">লাইসেন্স নম্বর লিখুন। / Please type the license number.</p>
+            </div>
+
+            <div class="grid-2">
+              <div class="field" data-field="level">
+                <label for="f-level">কোর্স লেভেল <span class="en">Level</span></label>
+                <input id="f-level" type="text" value="N5" list="level-list" autocomplete="off" />
+                <datalist id="level-list">
+                  <option value="N5"></option>
+                  <option value="N4"></option>
+                  <option value="N3"></option>
+                  <option value="N2"></option>
+                  <option value="N1"></option>
+                </datalist>
+              </div>
+              <div class="field" data-field="hours">
+                <label for="f-hours">মোট ঘণ্টা <span class="en">Total Hours</span></label>
+                <input id="f-hours" type="text" inputmode="numeric" value="180" autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="field" data-field="course">
+              <label for="f-course">কোর্সের নাম <span class="en">Course Name</span></label>
+              <input id="f-course" type="text" value="Basic Japanese Language Course" autocomplete="off" />
+            </div>
+
+            <div class="grid-2">
+              <div class="field" data-field="start">
+                <label for="f-start">শুরুর তারিখ <span class="en">Start Date</span> <span class="req">*</span></label>
+                <input id="f-start" type="date" value="2026-01-07" />
+                <p class="ferr">শুরুর তারিখ দিন। / Please pick a start date.</p>
+              </div>
+              <div class="field" data-field="end">
+                <label for="f-end">শেষের তারিখ <span class="en">End Date</span> <span class="req">*</span></label>
+                <input id="f-end" type="date" value="2026-03-07" />
+                <p class="ferr">শেষের তারিখ শুরুর তারিখের আগে হতে পারবে না। / End date must be on or after the start date.</p>
+              </div>
+            </div>
+
+            <div class="field" data-field="issue">
+              <label for="f-issue">ইস্যুর তারিখ <span class="en">Issue Date</span></label>
+              <input id="f-issue" type="date" />
+              <p class="hint">খালি রাখলে PDF ডাউনলোডের দিনের তারিখ নিজে থেকে বসবে। চাইলে হাতে অন্য তারিখও দেওয়া যাবে।</p>
+            </div>
+
+            <div class="field" data-field="months">
+              <label for="f-months">কোর্সের মেয়াদ (মাস) <span class="en">Duration (Months)</span></label>
+              <input id="f-months" type="number" min="1" max="36" step="1" value="3" />
+              <p class="hint">তারিখ বদলালে মেয়াদ নিজে থেকে হিসাব হয়ে যাবে — চাইলে হাতে বদলাতেও পারবেন।</p>
+            </div>
+
+            <div class="field" data-field="centre">
+              <label for="f-centre">সেন্টারের নাম <span class="en">Centre Name</span></label>
+              <input id="f-centre" type="text" value="SB Vocational Training Centre" autocomplete="off" />
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn-download" id="btn-download">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span id="btn-download-label">PDF ডাউনলোড করুন · Download PDF</span>
+              </button>
+              <button type="button" class="btn-reset" id="btn-reset">ডিফল্ট তথ্য ফিরিয়ে আনুন · Reset to demo values</button>
+              <div class="status" id="status" role="status" aria-live="polite"></div>
+              <p class="privacy">সব তথ্য এই ব্রাউজারেই প্রসেস হয় — কোনো সার্ভারে আপলোড হয় না।</p>
+            </div>
+          </form>
+        </section>
+
+        <!-- ================= preview ================= -->
+        <section class="preview-col" aria-label="সার্টিফিকেট প্রিভিউ">
+          <div class="preview-head">
+            <h2>লাইভ প্রিভিউ <span class="en">Live Preview</span></h2>
+            <span class="spec">A4 · ল্যান্ডস্কেপ · প্রিন্টের উপযোগী</span>
+          </div>
+          <div class="cert-shadow" id="cert-holder"></div>
+        </section>
+      </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+      (function () {
+        "use strict";
+
+        var DEFAULTS = {
+          name: "ABU BAKAR RIYAD",
+          license: "SBVTC/N5/2026/00427",
+          level: "N5",
+          course: "Basic Japanese Language Course",
+          start: "2026-01-07",
+          end: "2026-03-07",
+          months: "3",
+          hours: "180",
+          centre: "SB Vocational Training Centre"
+        };
+
+        var els = {
+          form: document.getElementById("cert-form"),
+          holder: document.getElementById("cert-holder"),
+          status: document.getElementById("status"),
+          btn: document.getElementById("btn-download"),
+          btnLabel: document.getElementById("btn-download-label"),
+          name: document.getElementById("f-name"),
+          license: document.getElementById("f-license"),
+          level: document.getElementById("f-level"),
+          course: document.getElementById("f-course"),
+          start: document.getElementById("f-start"),
+          end: document.getElementById("f-end"),
+          issue: document.getElementById("f-issue"),
+          months: document.getElementById("f-months"),
+          hours: document.getElementById("f-hours"),
+          centre: document.getElementById("f-centre")
+        };
+
+        function esc(s) {
+          return String(s == null ? "" : s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function pad2(n) {
+          n = String(n);
+          return n.length < 2 ? "0" + n : n;
+        }
+
+        function parseDate(v) {
+          if (!v) return null;
+          var p = v.split("-");
+          if (p.length !== 3) return null;
+          return { y: p[0], m: parseInt(p[1], 10), d: parseInt(p[2], 10) };
+        }
+
+        var ONES = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+          "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+          "Seventeen", "Eighteen", "Nineteen"];
+        var TENS = ["", "", "Twenty", "Thirty"];
+        function numWord(n) {
+          n = parseInt(n, 10);
+          if (isNaN(n) || n < 1) return String(n || "");
+          if (n < 20) return ONES[n];
+          if (n < 40) {
+            var r = n % 10;
+            return TENS[Math.floor(n / 10)] + (r ? "-" + ONES[r].toLowerCase() : "");
+          }
+          return String(n);
+        }
+
+        function readData() {
+          return {
+            name: els.name.value.trim(),
+            license: els.license.value.trim(),
+            level: els.level.value.trim() || "N5",
+            course: els.course.value.trim() || DEFAULTS.course,
+            start: parseDate(els.start.value),
+            end: parseDate(els.end.value),
+            issue: parseDate(els.issue.value) || todayParts(),
+            months: els.months.value,
+            hours: els.hours.value.trim() || "180",
+            centre: els.centre.value.trim() || DEFAULTS.centre
+          };
+        }
+
+        var MONTHS_EN = ["January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"];
+        function todayParts() {
+          var t = new Date();
+          return { y: String(t.getFullYear()), m: t.getMonth() + 1, d: t.getDate() };
+        }
+        function fmtIssue(dt) {
+          if (!dt) return "";
+          return pad2(dt.d) + " " + (MONTHS_EN[dt.m - 1] || "") + " " + dt.y;
+        }
+
+        function jpDate(dt) {
+          if (!dt) return "―― 年 ―― 月 ―― 日";
+          return dt.y + " 年 " + pad2(dt.m) + " 月 " + pad2(dt.d) + " 日";
+        }
+
+        function certHTML(d) {
+          var levelTxt = "LEVEL-" + d.level.toUpperCase();
+          var monthsNum = parseInt(d.months, 10);
+          var monthsJp = isNaN(monthsNum) ? "――" : pad2(monthsNum);
+          var monthsWord = isNaN(monthsNum) ? "" : numWord(monthsNum);
+          var monthUnit = monthsNum === 1 ? "month" : "months";
+          var nameLen = d.name.length;
+          var nameCls = nameLen <= 22 ? "lg" : nameLen <= 30 ? "md" : "sm";
+
+          var jpBody =
+            "あなたは当センターが主催する " + jpDate(d.start) + "から " + jpDate(d.end) +
+            "まで " + monthsJp + " ヶ月間 " + esc(d.hours) +
+            " 時間以上の日本語能力講座の基礎課程を修了したことを証明いたします。";
+
+          var enBody =
+            "This is to certify that the above-named trainee has successfully completed the " +
+            esc(d.course) + " conducted by " + esc(d.centre) +
+            ", comprising a minimum of " + esc(d.hours) + " hours over a period of " +
+            esc(monthsWord) + " " + monthUnit + ".";
+
+          return (
+            '<div class="cert">' +
+              '<div class="cert-frame"><div class="cert-inner">' +
+                '<div class="cert-head">' +
+                  '<div class="cert-logo"><img src="data:image/jpeg;base64,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" alt="" /></div>' +
+                  '<div class="cert-title">' +
+                    '<div class="cert-centre">' + esc(d.centre) + "</div>" +
+                    '<div class="cert-level">' + esc(levelTxt) + "</div>" +
+                  "</div>" +
+                  '<div class="cert-license">LICENSE NO:<strong>' +
+                    (esc(d.license) || "—") + "</strong></div>" +
+                "</div>" +
+                '<div class="cert-jp-title">修了証明書</div>' +
+                '<div class="cert-en-sub">Certificate of Completion</div>' +
+                '<div class="cert-name ' + nameCls + '">' + (esc(d.name) || "—") + "</div>" +
+                '<p class="cert-jp-body">' + jpBody + "</p>" +
+                '<p class="cert-en-body">' + enBody + "</p>" +
+                '<div class="cert-bottom">' +
+                  '<div class="cert-issue">Date of Issue: <strong>' +
+                    esc(fmtIssue(d.issue)) + "</strong></div>" +
+                  '<div class="cert-divider"></div>' +
+                  '<div class="cert-sigs">' +
+                    '<div class="cert-sig"><div class="line"></div>' +
+                      '<div class="role">Coordinator</div>' +
+                      '<div class="org">' + esc(d.centre) + "</div></div>" +
+                    '<div class="cert-sig"><div class="line"></div>' +
+                      '<div class="role">Director / Authorized Signatory</div>' +
+                      '<div class="org">' + esc(d.centre) + "</div></div>" +
+                  "</div>" +
+                "</div>" +
+                '<div class="cert-foot">' + esc(d.centre) +
+                  " &nbsp;•&nbsp; Japanese Language Training &nbsp;•&nbsp; " + esc(levelTxt) + "</div>" +
+              "</div></div>" +
+            "</div>"
+          );
+        }
+
+        function render() {
+          els.holder.innerHTML = certHTML(readData());
+          fitPreview();
+        }
+
+        function fitPreview() {
+          var cert = els.holder.querySelector(".cert");
+          if (!cert) return;
+          var w = els.holder.clientWidth;
+          if (w > 0) cert.style.fontSize = (w * 19) / 1123 + "px";
+        }
+
+        /* ---- auto-calc duration from dates ---- */
+        function autoMonths() {
+          var s = parseDate(els.start.value);
+          var e = parseDate(els.end.value);
+          if (!s || !e) return;
+          var diff = (parseInt(e.y, 10) - parseInt(s.y, 10)) * 12 + (e.m - s.m);
+          if (e.d >= s.d) diff += 1;
+          if (diff < 1) diff = 1;
+          els.months.value = diff;
+        }
+
+        /* ---- validation ---- */
+        function setError(key, on) {
+          var wrap = els.form.querySelector('[data-field="' + key + '"]');
+          if (wrap) wrap.classList.toggle("has-error", !!on);
+          var input = document.getElementById("f-" + key);
+          if (input) input.classList.toggle("invalid", !!on);
+        }
+
+        function validate() {
+          var ok = true;
+          var firstBad = null;
+          function check(key, bad) {
+            setError(key, bad);
+            if (bad) { ok = false; if (!firstBad) firstBad = key; }
+          }
+          check("name", !els.name.value.trim());
+          check("license", !els.license.value.trim());
+          var s = parseDate(els.start.value);
+          var e = parseDate(els.end.value);
+          check("start", !s);
+          var endBad = !e || (s && e &&
+            (e.y + pad2(e.m) + pad2(e.d)) < (s.y + pad2(s.m) + pad2(s.d)));
+          check("end", endBad);
+          return { ok: ok, firstBad: firstBad };
+        }
+
+        function showStatus(msg, kind) {
+          els.status.textContent = msg;
+          els.status.className = "status show " + kind;
+        }
+        function hideStatus() {
+          els.status.className = "status";
+          els.status.textContent = "";
+        }
+
+        /* ---- PDF download ---- */
+        function fileNameFor(name) {
+          var clean = (name || "Certificate").replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim();
+          return "Certificate-" + (clean || "Student") + ".pdf";
+        }
+
+        var busy = false;
+        function downloadPDF() {
+          if (busy) return;
+          hideStatus();
+          var v = validate();
+          if (!v.ok) {
+            showStatus("কিছু আবশ্যক তথ্য বাকি আছে — লাল চিহ্নিত ঘরগুলো পূরণ করুন। / Please fill in the highlighted fields.", "err");
+            var bad = document.getElementById("f-" + v.firstBad);
+            if (bad) { bad.focus(); bad.scrollIntoView({ block: "center", behavior: "smooth" }); }
+            return;
+          }
+          if (typeof window.html2canvas !== "function" || !window.jspdf || typeof window.jspdf.jsPDF !== "function") {
+            showStatus("PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ চেক করে পেজটি রিফ্রেশ করে আবার চেষ্টা করুন। / PDF library failed to load — check your connection and refresh.", "err");
+            return;
+          }
+
+          busy = true;
+          els.btn.disabled = true;
+          els.btnLabel.textContent = "PDF তৈরি হচ্ছে… · Generating…";
+
+          var data = readData();
+          var stage = document.createElement("div");
+          stage.style.cssText = "position:fixed;left:-12000px;top:0;width:1123px;height:794px;background:#ffffff;";
+          stage.innerHTML = certHTML(data);
+          var cert = stage.querySelector(".cert");
+          cert.style.width = "1123px";
+          cert.style.height = "794px";
+          cert.style.fontSize = "19px";
+          document.body.appendChild(stage);
+
+          function cleanup() {
+            if (stage.parentNode) stage.parentNode.removeChild(stage);
+            busy = false;
+            els.btn.disabled = false;
+            els.btnLabel.textContent = "PDF ডাউনলোড করুন · Download PDF";
+          }
+
+          var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+          fontsReady
+            .then(function () {
+              return window.html2canvas(cert, {
+                scale: 2.5,
+                backgroundColor: "#ffffff",
+                useCORS: true,
+                logging: false
+              });
+            })
+            .then(function (canvas) {
+              var img = canvas.toDataURL("image/jpeg", 0.97);
+              var pdf = new window.jspdf.jsPDF({
+                orientation: "landscape",
+                unit: "mm",
+                format: "a4",
+                compress: true
+              });
+              pdf.addImage(img, "JPEG", 0, 0, 297, 210);
+              pdf.save(fileNameFor(data.name));
+              cleanup();
+              showStatus("PDF তৈরি হয়ে ডাউনলোড হয়েছে। / Certificate PDF downloaded.", "ok");
+            })
+            .catch(function () {
+              cleanup();
+              showStatus("PDF তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন। / Something went wrong — please try again.", "err");
+            });
+        }
+
+        /* ---- wiring ---- */
+        els.form.addEventListener("input", function (ev) {
+          if (ev.target === els.start || ev.target === els.end) autoMonths();
+          ["name", "license", "start", "end"].forEach(function (k) { setError(k, false); });
+          render();
+        });
+        els.form.addEventListener("change", render);
+        els.btn.addEventListener("click", downloadPDF);
+        document.getElementById("btn-reset").addEventListener("click", function () {
+          els.name.value = DEFAULTS.name;
+          els.license.value = DEFAULTS.license;
+          els.level.value = DEFAULTS.level;
+          els.course.value = DEFAULTS.course;
+          els.start.value = DEFAULTS.start;
+          els.end.value = DEFAULTS.end;
+          els.issue.value = "";
+          els.months.value = DEFAULTS.months;
+          els.hours.value = DEFAULTS.hours;
+          els.centre.value = DEFAULTS.centre;
+          ["name", "license", "start", "end"].forEach(function (k) { setError(k, false); });
+          hideStatus();
+          render();
+        });
+
+        if (window.ResizeObserver) {
+          new ResizeObserver(fitPreview).observe(els.holder);
+        }
+        window.addEventListener("resize", fitPreview);
+
+        render();
+      })();
+    </script>
+  </body>
+</html>
